@@ -1,8 +1,11 @@
-/*Note the SpeechRecognition functionality does work but the prompt to allow access to microphone keeps popping up
-in order to use this function you have to catch it in between prompts - spoke with Albert about it already
+/*Note the SpeechRecognition functionality does work locally but the prompt to allow access to the
+microphone keeps popping up in order to use this function you have to catch it in between prompts.
+There is no prompt though on the live site.
+- spoke with Albert about it already
 
-Implemented the sound for bonus marks - when the user reaches levels 5 & 10 different music is played
-(executive decision to change it to this as those are the highlighted levels).
+BONUS: Implemented the sound for bonus marks - when the user reaches levels 5 & 10 different music is played
+(executive decision to change it to this as those are the highlighted levels, which would allow the user 
+  to "keep" those winnings at minimum).
 If the user gets the answer right or wrong sounds play accordingly.*/
 
 new Vue({
@@ -39,6 +42,7 @@ new Vue({
     music3: new Audio("./js/Round3.ogg"),
     musicRight: new Audio("./js/RightAnswerShort.ogg"),
     musicWrong: new Audio("./js/WrongAnswer.ogg"),
+    musicWinner: new Audio("./js/Winner.ogg"),
     host: new SpeechSynthesisUtterance(),
     selected: undefined,
     disabled: false,
@@ -49,10 +53,10 @@ new Vue({
     //qIndex is variable to watch but made function
     qIndex() {
       this.askedAudience = false;
-      if (this.qIndex == 4) {
-        this.playRound2();
-      } else if (this.qIndex == 9) {
+      if (this.qIndex == 9) {
         this.playRound3();
+      } else if (this.qIndex == 4) {
+        this.playRound2();
       } else {
         this.playRound1();
       }
@@ -112,6 +116,7 @@ new Vue({
         this.playRightAnswerMusic();
         console.log(this.qIndex);
         if (this.qIndex === 14) {
+          this.playWinnerMusic();
           //if the user answers the final answer correctly, the question spot changes to winner and the answer spots go blank
           this.question = "Winner";
           this.answer1 = "";
@@ -155,6 +160,9 @@ new Vue({
     },
     playWrongAnswerMusic() {
       this.musicWrong.play();
+    },
+    playWinnerMusic() {
+      this.musicWinner.play();
     },
     //reads the questions and answers
     read() {
@@ -201,12 +209,31 @@ new Vue({
     askAudience() {
       this.askedAudience = true;
     },
+    /* MY PSEUDO CODE FROM THE DISCUSSION BOARD - I did make changes to make the functionality work better
+    Upon clicking the 50/50 button a function would be called, which would
+    1.	assign the answers to a new array called fifty
+    2.	call another function randomize which would take an array (i.e. fifty) as a parameter, and would:
+    •	randomly pick an index from the passed-in array
+    •	find the index of the correct answer in the array
+    •	find if any there are any empty strings in the array (because the function will be called twice to remove two answers)
+    •	if there is an empty string find the index of such and assign to variable
+    •	if the randomIndex is not an empty string then
+    •	check if the randomIndex is not equal to the correct answer index.  If randomIndex is not equal to correct answer index then 
+    •	splice the randomIndex value from the array and replace it with an empty string and assign it to a variable called randomWrongAnswer
+    •	return the randomWrongAnswer variable and exit
+    •	But if the randomIndex is equal to the correct answer index
+    •	Run the function again
+    •	But if the randomIndex is equal to an empty string then
+    •	Run the function again
+    3.	The randomWrongAnswer would now be part of the fifty array 
+    4.	The randomize function would be called a second time and repeat steps 2 and 3 to find a second wrong answer
+    5.	After running through the function a second time, the two wrong answers would be assigned to the answers1-4 and the empty strings would be displayed back on the board.
+
+    */
     fiftyFifty() {
       const fifty = [this.answer1, this.answer2, this.answer3, this.answer4];
 
-      const removed1 = this.randomizeIndex(fifty);
-      console.log(removed1);
-      // const removed2 = this.randomizeIndex(fifty);
+      this.randomizeIndex(fifty);
 
       [this.answer1, this.answer2, this.answer3, this.answer4] = fifty;
     },
@@ -214,20 +241,6 @@ new Vue({
       //pick two random indexes from wrong and correct answers array (passed into function)
       let randomIndex1 = Math.floor(Math.random() * array.length);
       let randomIndex2 = Math.floor(Math.random() * array.length);
-
-      // let answerIndex = array.findIndex(arr =>
-      //   arr.includes(this.correctAnswer)
-      // );
-      // console.log(answerIndex);
-
-      // let emptyStrings = array.includes("");
-      // console.log(emptyStrings);
-      // let emptyStringIndex = undefined;
-
-      // if (emptyStrings) {
-      //   emptyStringIndex = array.findIndex(arr => arr.includes(""));
-      //   console.log(emptyStringIndex);
-      // }
 
       // if first random no. doesn't match the second
       if (randomIndex1 != randomIndex2) {
@@ -237,7 +250,7 @@ new Vue({
           randomIndex2 != this.correctLetter
         ) {
           /*assign passed in array to new variable and then splice out the value at the two indexes
-          // and replace with blank strings*/
+          and replace with blank strings*/
           let newArray = array;
           let randomWrongAnswer1 = newArray.splice(randomIndex1, 1, "");
           let randomWrongAnswer2 = newArray.splice(randomIndex2, 1, "");
