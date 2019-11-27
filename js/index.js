@@ -133,7 +133,9 @@ new Vue({
         //disabled is to disable the user from selecting ABC or D
         this.disabled = true;
         //question spot changes and answer spots go blank
-        this.question = "Game Over";
+        this.question = `Game Over! &nbsp; 
+        The Correct Answer is: &nbsp;
+        ${this.correctAnswer}`;
         this.answer1 = "";
         this.answer2 = "";
         this.answer3 = "";
