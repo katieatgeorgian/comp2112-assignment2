@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Who Wants to be a Millionaire?</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link
+      rel="stylesheet"
+      href="https://static2.sharepointonline.com/files/fabric/office-ui-fabric-core/4.1.0/css/fabric.min.css"
+    />
+    <link href="styles.css" rel="stylesheet" />
+  </head>
+  <body>
+    <div
+      id="app"
+      v-cloak
+      @keyup.65="isAnswer('a')"
+      @keyup.66="isAnswer('b')"
+      @keyup.67="isAnswer('c')"
+      @keyup.68="isAnswer('d')"
+      tabindex="-1"
+    >
+      <div>
+        <button
+          id="start"
+          class="startBtn"
+          :class="{startButton:selected}"
+          @click="startGame"
+        >
+          Click to Start
+        </button>
+      </div>
+      <main>
+        <div class="header">
+          <!-- Place to place messages or voting results etc -->
+        </div>
+        <h1 class="question" v-html="question"></h1>
+
+        <button
+          id="a"
+          class="item-a"
+          :class="{'disabled': disabled}"
+          @click="isAnswer('a')"
+          v-html="answer1"
+        >
+          <span>A: </span>
+        </button>
+        <button
+          id="b"
+          class="item-b"
+          :class="{'disabled': disabled}"
+          @click="isAnswer('b')"
+          v-html="answer2"
+        >
+          <span>B: </span>
+        </button>
+        <button
+          id="c"
+          class="item-c"
+          :class="{'disabled': disabled}"
+          @click="isAnswer('c')"
+          v-html="answer3"
+        >
+          <span>C: </span>
+        </button>
+        <button
+          id="d"
+          class="item-d"
+          :class="{'disabled': disabled}"
+          @click="isAnswer('d')"
+          v-html="answer4"
+        >
+          <span>D: </span>
+        </button>
+      </main>
+
+      <aside>
+        <section>
+          <button id="fifty_fifty" @click="fiftyFifty">
+            <i class="ms-Icon ms-Icon--Contrast" aria-hidden="true"></i>
+          </button>
+          <button id="ask_audience" @click="askAudience">
+            <i class="ms-Icon ms-Icon--Group" aria-hidden="true"></i>
+          </button>
+          <div v-if="askedAudience">
+            <button class="audience">
+              <a
+                href="https://codepen.io/katieatgeorgian/full/ExxJPRv"
+                target="_blank"
+                >Ask the Audience</a
+              >
+            </button>
+          </div>
+          <div v-else></div>
+          <button id="phone_friend">
+            <i class="ms-Icon ms-Icon--Phone" aria-hidden="true"></i>
+          </button>
+        </section>
+
+        <ul>
+          <li :class="{'active': val.level == qIndex + 1}" v-for="val in money">
+            {{ val.level }} - {{ val.amount }}
+          </li>
+        </ul>
+      </aside>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.15/lodash.min.js"></script>
+    <script src="js/index.js"></script>
+  </body>
+</html>
