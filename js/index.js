@@ -125,9 +125,6 @@ new Vue({
         }
       } else {
         this.playWrongAnswerMusic();
-        this.music1.paused();
-        this.music2.paused();
-        this.music3.paused();
         //disabled is to disable the user from selecting ABC or D
         this.disabled = true;
         //question spot changes and answer spots go blank
